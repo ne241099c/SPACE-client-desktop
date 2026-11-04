@@ -1,0 +1,107 @@
+{
+  "name": "senshu-universe-desktop",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Senshu-Universe 本番接続デスクトップアプリ",
+  "author": "Senshu-Universe",
+  "productName": "Senshu-Universe",
+  "main": "dist-electron/main.cjs",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "build:electron": "tsc -p tsconfig.json && node scripts/build-electron.mjs",
+    "start": "npm run build:electron && electron .",
+    "dist:win": "npm run build:electron && electron-builder --win nsis --x64 --publish never",
+    "dist:mac": "npm run build:electron && electron-builder --mac dmg zip --arm64 --x64 --publish never",
+    "test": "npm run build:electron && node --test --test-concurrency=1 \"e2e-desktop/**/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^24.13.1",
+    "electron": "^45.2.2",
+    "electron-builder": "^26.18.0",
+    "electron-updater": "^6.8.11",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "globals": "^16.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "build": {
+    "appId": "jp.senshu-universe.app",
+    "productName": "Senshu-Universe",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "!dist-electron/**/*.map",
+      "build/icon.png",
+      "package.json",
+      "!**/node_modules/**"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "publish": {
+      "provider": "github",
+      "owner": "ne241099c",
+      "repo": "SPACE-client-desktop",
+      "tagNamePrefix": "v",
+      "releaseType": "draft"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "Senshu-Universe-${version}-win-${arch}-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Senshu-Universe"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "Senshu-Universe-${version}-mac-${arch}.${ext}",
+      "category": "public.app-category.social-networking",
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "enableCookieEncryption": true
+    }
+  }
+}

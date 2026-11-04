@@ -1,0 +1,84 @@
+# 検証は push・PR ごと、配布物の作成は v* タグのときだけ行う。Release の作成・公開は人が行う。
+name: Desktop
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      web_ref:
+        description: 検証に使う SPACE-client のブランチ
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      # Web 側（bridge の受け口・Provider）も実際のソースで検証する。
+      SPACE_WEB_DIR: ${{ github.workspace }}/web
+      SPACE_WEB_REQUIRED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Cityboypenguin/SPACE-client
+          ref: ${{ inputs.web_ref || 'main' }}
+          path: web
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Install web dependencies
+        run: npm ci
+        working-directory: web
+      - name: Check tag and package version
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const { version } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version)) throw new Error('版数は x.y.z にしてください');
+          if (process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME !== `v${version}`) throw new Error('タグと package.json の版数が一致しません');
+          JS
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Install test browser
+        run: npx playwright install chromium
+      - name: Test
+        run: npm test
+      - name: Build Windows installer
+        if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/v')
+        run: npm run dist:win
+      - name: Build Mac packages
+        if: runner.os == 'macOS' && startsWith(github.ref, 'refs/tags/v')
+        run: npm run dist:mac
+      - name: Keep build artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ runner.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/latest*.yml
+            release/*.blockmap
+          if-no-files-found: error
+          retention-days: 14
