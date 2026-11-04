@@ -2,7 +2,7 @@
   "name": "senshu-universe-desktop",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Senshu-Universe 本番接続デスクトップアプリ",
   "author": "Senshu-Universe",
   "productName": "Senshu-Universe",

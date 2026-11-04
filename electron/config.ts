@@ -1,6 +1,8 @@
 import { app } from 'electron';
 
 export const APP_ID = 'jp.senshu-universe.app';
+// 保存先のフォルダ名。APP_ID をそのまま使うと末尾が .app になり、macOS がアプリと誤認する。
+export const USER_DATA_DIR = 'jp.senshu-universe.desktop';
 export const PRODUCT_NAME = 'Senshu-Universe';
 export const PRODUCTION_ORIGIN = 'https://senshu-universe.com';
 export const RELEASES_URL = 'https://github.com/ne241099c/SPACE-client-desktop/releases';

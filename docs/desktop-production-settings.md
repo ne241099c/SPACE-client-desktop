@@ -19,7 +19,7 @@
 - 証明書の検証を差し替えない。CORS を無効化せず、通信の Origin ヘッダーも書き換えない。
 - preload は信頼した URL のメインフレームだけに5種類の bridge を渡す。IPC の受信時は URL に加え、対象 WebContents と mainFrame の一致を検証する。
 - 通知の文言は長さを制限。リンクは内部の絶対パスだけを許可し、//、バックスラッシュ、制御文字を拒否する。未読数は0以上999999以下の整数だけを受け付ける。
-- appId だけでなく userData も `jp.senshu-universe.app`、partition も `persist:senshu-universe-production` としてデモから分離する。
+- appId だけでなく userData も `jp.senshu-universe.desktop`（末尾が `.app` だと macOS がアプリと誤認するため、appId とは別の名前）、partition も `persist:senshu-universe-production` としてデモから分離する。
 - 開発起動だけループバックの HTTP オリジンを指定できる。配布物では関連の環境変数を無視する。
 
 安全設定の参考：[Electron Security](https://www.electronjs.org/docs/latest/tutorial/security)、[WebPreferences](https://www.electronjs.org/docs/latest/api/structures/web-preferences)。

@@ -1,6 +1,6 @@
 import { app, ipcMain, Menu, nativeImage, Notification, Tray, powerMonitor, dialog } from 'electron';
 import path from 'node:path';
-import { APP_ID, PRODUCT_NAME, siteOrigin } from './config';
+import { APP_ID, PRODUCT_NAME, USER_DATA_DIR, siteOrigin } from './config';
 import { createSnsWindow } from './windows';
 import { isInternalLink, isTrustedSender, isTrustedUrl, validNotification } from './security';
 import { loadBounds, saveBounds } from './settings';
@@ -14,7 +14,7 @@ const devProfile = !app.isPackaged ? process.env.SPACE_DESKTOP_PROFILE : undefin
 if (devProfile && !/^[a-zA-Z0-9_-]{1,48}$/.test(devProfile)) throw new Error('プロファイル名が不正です。');
 app.setPath('userData', devProfile
   ? path.join(app.getPath('temp'), `senshu-universe-test-${devProfile}`)
-  : path.join(app.getPath('appData'), APP_ID));
+  : path.join(app.getPath('appData'), USER_DATA_DIR));
 if (process.platform === 'win32') app.setAppUserModelId(APP_ID);
 
 if (!app.requestSingleInstanceLock()) app.quit();
