@@ -26,4 +26,4 @@ VS Code のターミナルでは `ELECTRON_RUN_AS_NODE=1` が設定されてい�
 - Windows は NSIS インストーラーと自動更新です。Mac は Developer ID 署名・公証を導入するまで、新版を案内して配布ページを開きます。
 - コード署名が無いため、Windows は SmartScreen、Mac は Gatekeeper の警告が出る可能性があります。
 
-[開発方針](docs/production-desktop-plan.md)、[通信と安全設定](docs/desktop-production-settings.md)、[配布手順](docs/release.md)、[Windows 実機確認](docs/windows-verification.md)、[検証記録](docs/desktop-verification.md) を参照してください。
+[通信と安全設定](docs/desktop-production-settings.md)、[配布手順](docs/release.md)、[Windows 実機確認](docs/windows-verification.md)、[検証記録](docs/desktop-verification.md) を参照してください。

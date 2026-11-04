@@ -2,7 +2,7 @@
 
 ## 現在の扱い
 
-この実装では push、タグ作成、GitHub リポジトリ作成、Release の作成・公開を行わない。CI も配布物を Actions artifact に保存するだけで、Release の公開権限を持たない。以降のタグ・配信操作はユーザーが内容を確認して行う。
+CI は配布物を Actions artifact に保存するだけで、Release の公開権限を持たない。タグの作成と Release の公開は、人が内容を確認して行う。
 
 ## Web とアプリの順序
 
