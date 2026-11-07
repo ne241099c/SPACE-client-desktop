@@ -132,6 +132,16 @@ test('Electron: 信頼境界・常駐・通知クリック・通信オリジン'
       await page.evaluate(() => { spaceDesktop.setUnreadCount(7); spaceDesktop.setUnreadCount(0); });
       if (process.platform === 'darwin') await expect.poll(() => application.evaluate(() => globalThis.desktopTest.badges)).toEqual([7, 0]);
     });
+    await t.test('Mac では通知のたびに Dock を跳ねさせる', { skip: process.platform !== 'darwin' }, async () => {
+      await application.evaluate(({ app, BrowserWindow }) => {
+        globalThis.desktopTest.bounces = 0;
+        app.dock.bounce = () => { globalThis.desktopTest.bounces += 1; return 0; };
+        BrowserWindow.getAllWindows()[0].hide();
+      });
+      await page.evaluate(() => spaceDesktop.notify({ title: 'テスト', body: '跳ねる', link: '/home' }));
+      await expect.poll(() => application.evaluate(() => globalThis.desktopTest.bounces)).toBe(1);
+      await page.waitForTimeout(1100);
+    });
     await t.test('連続した通知は落とさず、1秒ごとにまとめて表示', async () => {
       await application.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].hide());
       const before = await application.evaluate(() => globalThis.desktopTest.notifications.length);

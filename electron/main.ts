@@ -114,8 +114,11 @@ else {
       notification.show();
     };
     ipcMain.on(IPC.notify, (event, payload: unknown) => {
-      if (!isTrustedSender(event, win.webContents, origin) || !validNotification(payload)
-        || win.isFocused() || !Notification.isSupported()) return;
+      if (!isTrustedSender(event, win.webContents, origin) || !validNotification(payload) || win.isFocused()) return;
+      // Mac は Apple の署名が無いと OS 通知を出せない（macOS が拒否する）。代わりに Dock のアイコンを
+      // 1回跳ねさせて知らせる。署名が付いた後も、通知と一緒に跳ねるだけで害はない。
+      if (process.platform === 'darwin') app.dock?.bounce('informational');
+      if (!Notification.isSupported()) return;
       // OS 通知は1秒に1件までにする。間に届いた分は落とさず、最新の1件に「ほか N 件」としてまとめる。
       // 内容や送信先をログへ残さない。
       const wait = 1000 - (Date.now() - lastNotificationAt);
